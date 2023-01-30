@@ -19,7 +19,9 @@ public class PlayerScript : MonoBehaviour
 
     public bool isGround;
 
-    public float StrenthKickBall = 20f;
+    public float StrengthKickHorizontal = 10f;
+    public float StrengthKickVertical = 8f;
+    public float StrengthPullBall = 5f;
 
 
     // Start is called before the first frame update
@@ -58,8 +60,8 @@ public class PlayerScript : MonoBehaviour
         //check if user click mouse
         if (Input.GetMouseButtonDown(0))
         {
-            Vector2 ForceKickBall = new Vector2(StrenthKickBall, 0f);
-            RbBall.AddForce(ForceKickBall, ForceMode2D.Impulse);
+            Vector2 ForceKickBall = new Vector2(StrengthPullBall, 0f);
+            RbBall.AddForce(ForceKickBall * -1f, ForceMode2D.Impulse);
         }
     }
 
@@ -72,6 +74,12 @@ public class PlayerScript : MonoBehaviour
 
         //prevent the player from falling
         RbPlayer.freezeRotation = true;
+
+        if (collision.gameObject.name == "Ball")
+        {
+            Vector2 ForceKickBall = new Vector2(StrengthKickHorizontal, StrengthKickVertical);
+            RbBall.AddForce(ForceKickBall, ForceMode2D.Impulse);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -81,5 +89,6 @@ public class PlayerScript : MonoBehaviour
             isGround = false;
         }
     }
+
 
 }
