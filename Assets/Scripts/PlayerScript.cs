@@ -1,66 +1,79 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerScript : MonoBehaviour
 {
-    //declare some properties
     public GameObject Player;
-    public Rigidbody2D rb;
-    public float horizontalInput { get; set; }
-    public float verticalInput { get; set; }
+    public Rigidbody2D RbPlayer;
+
+    public GameObject Ball;
+    public Rigidbody2D RbBall;
+
+    public float InputHorizontal;
+    public float InputVertical;
+
+    public float StrengthHorizontal = 20f;
+    public float StrengthVertical = 5f;
+
     public bool isGround;
+
+    public float StrenthKickBall = 20f;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        //get game object
+        //Step 1: get gameobject & rigidbody2d to handle
         Player = GameObject.Find("Player");
-        //get init rigidbody2D for game object
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        RbPlayer = Player.GetComponent<Rigidbody2D>();
+        Ball = GameObject.Find("Ball");
+        RbBall= Ball.GetComponent<Rigidbody2D>();
         
     }
 
     void FixedUpdate()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        //Step 2: get input axis when press key
+        InputHorizontal = Input.GetAxis("Horizontal");
+        InputVertical = Input.GetAxisRaw("Vertical");
 
-        //move player horizontal
-        if (horizontalInput == 1f || horizontalInput == -1f)
+        //Check if press horizontal key
+        if (InputHorizontal != 0)
         {
-            Vector2 forceHorizontal = new Vector2(10f, 0f);
-            rb.AddForce(forceHorizontal * horizontalInput);
+            //Step 3: impact a force horizontal on the player
+            Vector2 ForceHorizontal = new Vector2(StrengthHorizontal, 0f);
+            RbPlayer.AddForce(ForceHorizontal * InputHorizontal, ForceMode2D.Force);
         }
 
-        //move player vertical, player can only jump when they are ground
-        if((verticalInput == 1f || verticalInput == -1f) && isGround)
+        //Check if press vertical key
+        if ((InputVertical == 1f || InputVertical == -1f) && isGround)
         {
-            Vector2 forceVertical = new Vector2(0f, 5f);
-            rb.AddForce(forceVertical * verticalInput, ForceMode2D.Impulse);
+            //Step 4: impact a force vertical on the player
+            Vector2 ForceVertical = new Vector2(0f, StrengthVertical);
+            RbPlayer.AddForce(ForceVertical * InputVertical, ForceMode2D.Impulse);
         }
 
+        //check if user click mouse
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 ForceKickBall = new Vector2(StrenthKickBall, 0f);
+            RbBall.AddForce(ForceKickBall, ForceMode2D.Impulse);
+        }
     }
-    /**
-     * check if player is grounding
-     */
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.name == "Ground")
+        if (collision.gameObject.name == "Ground")
         {
             isGround = true;
         }
+
+        //prevent the player from falling
+        RbPlayer.freezeRotation = true;
     }
 
-    /**
-     * check if player is not grounding
-     */
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.name == "Ground")
@@ -68,4 +81,5 @@ public class PlayerScript : MonoBehaviour
             isGround = false;
         }
     }
+
 }
