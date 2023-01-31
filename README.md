@@ -9,7 +9,8 @@
 ## 2. Code Flow
 
 2.1 . Get gameobject & Rigidbody2d 
-2.2. Handle Game Logic in FixedUpdate()
+
+2.2 . Handle Game Logic in FixedUpdate()
 - Get Input keyboard
 - Add Force for player
  
